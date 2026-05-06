@@ -1,0 +1,31 @@
+# Normalize all text files to LF in the repo,
+# so gradlew and shell scripts stay executable on Linux/Mac.
+
+* text=auto eol=lf
+
+# Force LF for shell/gradle scripts (critical — CRLF breaks ./gradlew on Linux)
+*.sh        text eol=lf
+*.gradle    text eol=lf
+gradlew     text eol=lf
+
+# Force LF for source files
+*.java      text eol=lf
+*.kt        text eol=lf
+*.ts        text eol=lf
+*.tsx       text eol=lf
+*.js        text eol=lf
+*.jsx       text eol=lf
+*.json      text eol=lf
+*.xml       text eol=lf
+*.md        text eol=lf
+*.properties text eol=lf
+
+# Treat binaries as binary (no EOL conversion)
+*.jar       binary
+*.png       binary
+*.jpg       binary
+*.jpeg      binary
+*.gif       binary
+*.ico       binary
+*.keystore  binary
+*.jsbundle  binary
