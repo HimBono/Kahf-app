@@ -21,7 +21,7 @@ class AppMonitorService {
   private sessionTimer: ReturnType<typeof setInterval> | null = null;
   private appStateSub: {remove(): void} | null = null;
 
-  // ─── Public API ──────────────────────────────────────────────────────────
+  // ─── Public API ────────────────────────────────────────────────────────
 
   async start(): Promise<{permissionGranted: boolean}> {
     const granted = await UsageStatsModule.hasPermission();
@@ -45,6 +45,7 @@ class AppMonitorService {
 
     useBlockingStore.getState().setMonitoring(true);
     await this.refreshDailyUsage();
+    this.startSessionTimer();
 
     return {permissionGranted: true};
   }
@@ -63,7 +64,7 @@ class AppMonitorService {
     UsageStatsModule.stopMonitoringService().catch(() => {});
   }
 
-  // ─── Internal ─────────────────────────────────────────────────────────────
+  // ─── Internal ──────────────────────────────────────────────────────────
 
   private handleAppChange = (event: AppChangeEvent): void => {
     const store = useBlockingStore.getState();
@@ -89,7 +90,8 @@ class AppMonitorService {
   };
 
   private startSessionTimer(): void {
-    // Tick every 60 seconds; first tick at 60 s = 1 minute
+    // Tick immediately at 0 seconds, then every 60 seconds
+    useBlockingStore.getState().tickSession();
     this.sessionTimer = setInterval(() => {
       useBlockingStore.getState().tickSession();
     }, 60_000);

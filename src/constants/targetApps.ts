@@ -1,31 +1,34 @@
-export const TARGET_APPS: Record<string, string> = {
-  'com.zhiliaoapp.musically': 'TikTok',
-  'com.ss.android.ugc.trill': 'TikTok',
-  'com.instagram.android': 'Instagram',
-  'com.google.android.youtube': 'YouTube',
-  'com.snapchat.android': 'Snapchat',
-};
-
 export const BLOCKING_TIERS = {
-  /** 1–4 min in session: gentle push notification nudge */
   SOFT: 'soft',
-  /** 5–14 min in session: overlay with 30 s reflection timer */
   FRICTION: 'friction',
-  /** 15+ min in session: full-screen hard lock */
   HARD: 'hard',
 } as const;
 
-export type BlockingTier = (typeof BLOCKING_TIERS)[keyof typeof BLOCKING_TIERS];
+export type BlockingTier = typeof BLOCKING_TIERS[keyof typeof BLOCKING_TIERS];
 
-/** Thresholds in minutes before each tier activates */
 export const TIER_THRESHOLDS: Record<BlockingTier, number> = {
-  [BLOCKING_TIERS.SOFT]: 1,
-  [BLOCKING_TIERS.FRICTION]: 5,
-  [BLOCKING_TIERS.HARD]: 15,
+  [BLOCKING_TIERS.SOFT]: 5,      // After 5 minutes
+  [BLOCKING_TIERS.FRICTION]: 15, // After 15 minutes
+  [BLOCKING_TIERS.HARD]: 30,     // After 30 minutes
 };
 
-export const isTargetApp = (packageName: string): boolean =>
-  packageName in TARGET_APPS;
+export const TARGET_APPS = {
+  'com.instagram.android': { displayName: 'Instagram' },
+  'com.facebook.katana': { displayName: 'Facebook' },
+  'com.twitter.android': { displayName: 'X (Twitter)' },
+  'com.reddit.frontpage': { displayName: 'Reddit' },
+  'com.snapchat.android': { displayName: 'Snapchat' },
+  'com.tiktok.android': { displayName: 'TikTok' },
+  'com.netflix.mediaclient': { displayName: 'Netflix' },
+  'com.spotify.music': { displayName: 'Spotify' },
+  'com.youtube.android': { displayName: 'YouTube' },
+} as const;
 
-export const getAppDisplayName = (packageName: string): string =>
-  TARGET_APPS[packageName] ?? packageName;
+export function isTargetApp(packageName: string): boolean {
+  return packageName in TARGET_APPS;
+}
+
+export function getDisplayName(packageName: string): string {
+  const app = TARGET_APPS[packageName as keyof typeof TARGET_APPS];
+  return app?.displayName || packageName;
+}
